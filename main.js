@@ -199,8 +199,8 @@ function createEasyLevelKeyboard() {
                                 randomButtons[q].classList.remove('active');
 
                                 activateButton(index + 1);
-                            }, 300);
-                        }, 300);
+                            }, 500);
+                        }, 500);
                         break;
                     }
                 }
