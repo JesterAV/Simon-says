@@ -282,7 +282,7 @@ function createEasyLevelKeyboard() {
         startButton.style.visibility = 'visible';
         roundCounter.style.display = 'none';
         winOrLoss.innerText = '';
-        winOrLoss.style.display = 'none';
+        winOrLoss.style.display = 'block';
         repeatSequence.disabled = true;
         repeatSequence.classList.remove('disabled');
         turnOnLevelButton();
