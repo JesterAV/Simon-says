@@ -183,8 +183,6 @@ function createEasyLevelKeyboard() {
             resultRandomNumber += randomNumber.toString();
         }
 
-        console.log(resultRandomNumber);
-
         randomButtons.forEach(button => {
             button.classList.remove('active');
         })
@@ -223,7 +221,6 @@ function createEasyLevelKeyboard() {
             if (startIndex >= 0 && startIndex < resultRandomNumber.length) {
                 if (inputLine.value[startIndex] == resultRandomNumber[startIndex]) {
                     counterTrue++;
-                    console.log(counterTrue);
 
                     keyboardLine.classList.add('true');
 
@@ -414,8 +411,6 @@ function createMediumLevelKeyboard() {
             resultRandomLetter += keyboardLetters[randomLetter].toString();
         }
 
-        console.log(resultRandomLetter);
-
         const activateButton = (index) => {
 
             if (index < resultRandomLetter.length) {
@@ -451,7 +446,6 @@ function createMediumLevelKeyboard() {
             if (startIndex >= 0 && startIndex < resultRandomLetter.length) {
                 if (inputLine.value[startIndex] == resultRandomLetter[startIndex]) {
                     counterTrue++;
-                    console.log(counterTrue);
 
                     keyboardLine.classList.add('true');
 
@@ -684,8 +678,6 @@ function createHardLevelKeyboard() {
             const randomIndex = getRandomNumber(0, randomButtonsList.length -1);
             resultRandomButton += randomButtonsList[randomIndex].toString();
         }
-
-        console.log(resultRandomButton);
 
         const activateButton = (index) => {
 

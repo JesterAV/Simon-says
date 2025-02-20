@@ -427,5 +427,5 @@ body {
     color:#fff;
     font-size: 50px;
     font-family: 'Jersey 15';
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
 }
