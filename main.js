@@ -255,7 +255,7 @@ function createEasyLevelKeyboard() {
                                     roundCounter.style.display = 'none';
                                     winOrLoss.innerText = '';
                                     turnOnLevelButton();
-                            }, 3000);
+                            }, 7000);
                         }
                     }
                 } else {
