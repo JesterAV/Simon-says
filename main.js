@@ -285,6 +285,7 @@ function createEasyLevelKeyboard() {
         winOrLoss.style.display = 'block';
         repeatSequence.disabled = true;
         repeatSequence.classList.remove('disabled');
+        resultRandomNumber = '';
         turnOnLevelButton();
     })
 
