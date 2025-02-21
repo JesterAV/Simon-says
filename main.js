@@ -104,6 +104,11 @@ function createEasyLevelKeyboard() {
             button.innerText = '0';
             buttons.appendChild(button);
             randomButtons.push(button);
+
+            button.addEventListener('click', () => {
+                inputLine.value += button.innerText;
+            });
+
             break;
         }
 
@@ -113,18 +118,18 @@ function createEasyLevelKeyboard() {
 
         button.addEventListener('click', () => {
             inputLine.value += button.innerText;
-        })
+        });
     }
 
     inputLine.addEventListener('input', () => {
         inputLine.value = inputLine.value.replace(/[^0-9]/g, '');
-    })
+    });
 
     inputLine.addEventListener('keydown', (event) => {
         if (event.key === 'Backspace') {
             event.preventDefault();
         }
-    })
+    });
 
     inputLine.addEventListener('keydown', (event) => {
         const checkkeyDown = event.key;
@@ -137,8 +142,8 @@ function createEasyLevelKeyboard() {
                     button.classList.remove('active');
                 },300)
             }
-        })
-    })
+        });
+    });
 
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('buttons_container');
@@ -170,11 +175,10 @@ function createEasyLevelKeyboard() {
 
     let round = 2;
 
-    function activeRandomButton() {
+    function activeRandomButtons() {
         let resultRandomNumber = '';
-        winOrLoss.style.display = 'block';
 
-        for (let i = 0; i < round; i++) {
+        for (let rand = 0; rand < round; rand++) {
             function getRandomNumber(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
@@ -183,29 +187,25 @@ function createEasyLevelKeyboard() {
             resultRandomNumber += randomNumber.toString();
         }
 
-        randomButtons.forEach(button => {
-            button.classList.remove('active');
-        })
-
         const activateButton = (index) => {
 
             if (index < resultRandomNumber.length) {
-                for (let q = 0; q < randomButtons.length; q++) {
-                    if (resultRandomNumber[index] == randomButtons[q].innerText) {
+                for (let i = 0; i < randomButtons.length; i++) {
+                    if (resultRandomNumber[index] == randomButtons[i].innerText) {
                         setTimeout(() => {
-                            randomButtons[q].classList.add('active');
+                            randomButtons[i].classList.add('active');
 
                             setTimeout(() => {
-                                randomButtons[q].classList.remove('active');
-
+                                randomButtons[i].classList.remove('active');
                                 activateButton(index + 1);
-                            }, 500);
-                        }, 500);
+                            }, 300);
+                        }, 300);
                         break;
                     }
                 }
             }
         }
+
         repeatSequence.addEventListener('click', () => {
             activateButton(0);
             repeatSequence.disabled = true;
@@ -219,77 +219,86 @@ function createEasyLevelKeyboard() {
         console.log(resultRandomNumber);
 
         inputLine.addEventListener('input', () => {
-            let startIndex = inputLine.value.length -1;
-            if (startIndex >= 0 && startIndex < resultRandomNumber.length) {
-                if (inputLine.value[startIndex] == resultRandomNumber[startIndex]) {
-                    counterTrue++;
+            let indexForCheck = 0;
 
+            if (indexForCheck >= 0 && indexForCheck < resultRandomNumber.length) {
+
+                if (inputLine.value[indexForCheck] == resultRandomNumber[indexForCheck]) {
+                    counterTrue++;
                     keyboardLine.classList.add('true');
 
                     setTimeout(() => {
                         keyboardLine.classList.remove('true');
                     }, 300);
 
+                    if (round == 10 && counterTrue == 10) {
+                        inputLine.disabled = true;
+                        winOrLoss.innerText = 'Хочешь встретиться в воскресенье?';
+                        inputLine.value = '';
+
+                        setTimeout(() => {
+                            inputLine.value = '';
+                            inputLine.disabled = false;
+                            buttonsContainer.style.display = 'none';
+                            keyboardLine.style.display = 'none';
+                            keyboard.style.display = 'none';
+                            inputLine.style.display = 'none';
+                            startButton.style.visibility = 'visible';
+                            roundCounter.style.display = 'none';
+                            winOrLoss.innerText = '';
+                            winOrLoss.style.display = 'none';
+                            repeatSequence.disabled = true;
+                            repeatSequence.classList.remove('disabled');
+                            resultRandomNumber = '';          
+                            startButton.style.visibility = 'visible';
+                            turnOnLevelButton();
+                        }, 10000);
+
+                        return;
+                    }
+
                     if (counterTrue == round) {
                         resultRandomNumber = '';
                         inputLine.value = '';
-                        winOrLoss.innerText = 'You Win!';
                         inputLine.disabled = true;
+                        winOrLoss.innerText = 'You Win!';
                         round += 2;
-                        newRound();
-
+                        
                         setTimeout(() => {
                             winOrLoss.innerText = '';
                             inputLine.disabled = false;
-                            activeRandomButton();
-                        }, 3000)
-
-                        if (round === 10) {
-                            inputLine.disabled = true;
-                            winOrLoss.innerText = "Хочешь встретиться в воскресенье?)";
-                            
-                            setTimeout(() => {
-                                    buttonsContainer.style.display = 'none';
-                                    keyboardLine.style.display = 'none';
-                                    keyboard.style.display = 'none';
-                                    inputLine.style.display = 'none';
-                                    startButton.style.visibility = 'visible';
-                                    roundCounter.style.display = 'none';
-                                    winOrLoss.innerText = '';
-                                    turnOnLevelButton();
-                            }, 7000);
-                        }
+                            newRound();
+                            activeRandomButtons();
+                        }, 3000);
                     }
-                } else {
+                } else if (inputLine.value[indexForCheck] != resultRandomNumber[indexForCheck]) {
+                    inputLine.value = '';
+                    winOrLoss.innerText = 'You Lose!';
                     keyboardLine.classList.add('false');
                     inputLine.disabled = true;
-                    winOrLoss.innerText = 'You Loss(';
-                    repeatSequence.disabled = true;
-                    repeatSequence.classList.add('disabled');
                 }
-
             }
+        })
+
+        newGameButton.addEventListener('click', () => {
+            inputLine.value = '';
+            inputLine.disabled = false;
+            buttonsContainer.style.display = 'none';
+            keyboardLine.style.display = 'none';
+            keyboard.style.display = 'none';
+            inputLine.style.display = 'none';
+            startButton.style.visibility = 'visible';
+            roundCounter.style.display = 'none';
+            winOrLoss.innerText = '';
+            winOrLoss.style.display = 'none';
+            repeatSequence.disabled = true;
+            repeatSequence.classList.remove('disabled');
+            resultRandomNumber = '';
+            turnOnLevelButton();
         });
     }
 
-    activeRandomButton();
-
-    newGameButton.addEventListener('click', () => {
-        inputLine.value = '';
-        inputLine.disabled = false;
-        buttonsContainer.style.display = 'none';
-        keyboardLine.style.display = 'none';
-        keyboard.style.display = 'none';
-        inputLine.style.display = 'none';
-        startButton.style.visibility = 'visible';
-        roundCounter.style.display = 'none';
-        winOrLoss.innerText = '';
-        winOrLoss.style.display = 'block';
-        repeatSequence.disabled = true;
-        repeatSequence.classList.remove('disabled');
-        resultRandomNumber = '';
-        turnOnLevelButton();
-    })
+    activeRandomButtons();
 
     function newRound() {
 
