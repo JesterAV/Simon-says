@@ -231,7 +231,7 @@ function createEasyLevelKeyboard() {
 
                     if (round == 10 && counterTrue == 10) {
                         inputLine.disabled = true;
-                        winOrLoss.innerText = 'Хочешь встретиться в воскресенье?';
+                        winOrLoss.innerText = 'Easy level passed';
                         inputLine.value = '';
 
                         setTimeout(() => {
