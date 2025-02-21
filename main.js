@@ -324,22 +324,23 @@ const keyboardLetters = 'qwertyuiopasdfghjklzxcvbnm';
 
 function createMediumLevelKeyboard() {
     inputLine.style.display = 'block';
-    
-    turnOffLevelButton();
+    startButton.style.visibility = 'hidden';
 
-    const randomButtons = [];
+    turnOffLevelButton();
 
     const keyboardLine = document.createElement('div');
     keyboardLine.classList.add('keyboard_line');
     keyboardAndInputLineContainer.appendChild(keyboardLine);
-    
+
     const keyboard = document.createElement('div');
     keyboard.classList.add('keyboard');
     keyboardAndInputLineContainer.appendChild(keyboard);
-
+    
     const buttons = document.createElement('div');
     buttons.classList.add('buttons');
     keyboard.appendChild(buttons);
+
+    const randomButtons = [];
 
     for (let key = 0; key < keyboardLetters.length; key++) {
         const button = document.createElement('button');
@@ -351,18 +352,18 @@ function createMediumLevelKeyboard() {
 
         button.addEventListener('click', () => {
             inputLine.value += button.innerText;
-        })
+        });
     }
 
     inputLine.addEventListener('input', () => {
         inputLine.value = inputLine.value.replace(/[^a-zA-z]/g, '');
-    })
+    });
 
     inputLine.addEventListener('keydown', (event ) => {
         if (event.key === 'Backspace') {
             event.preventDefault();
         }
-    })
+    });
 
     inputLine.addEventListener('keydown', (event) => {
         const checkkeyDown = event.key;
@@ -373,10 +374,10 @@ function createMediumLevelKeyboard() {
                 button.classList.add('active');
                 setTimeout(() => {
                     button.classList.remove('active');
-                }, 300)
+                }, 300);
             }
-        })
-    })
+        });
+    });
 
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('buttons_container');
@@ -408,13 +409,12 @@ function createMediumLevelKeyboard() {
 
     let round = 2;
 
-    function activateRandomLetterButton() {
+    function activeRandomButtons() {
         let resultRandomLetter = '';
-        winOrLoss.style.display = 'block';
 
-        for(let q = 0; q < round; q++) {
+        for (let rand = 0; rand < round; rand++) {
             function getRandomIndex(min, max) {
-                return Math.floor(Math.random() * (max- min + 1)) + min;
+                return Math.floor(Math.random() * (max - min + 1)) + min;
             }
 
             const randomLetter = getRandomIndex(0, keyboardLetters.length -1);
@@ -424,15 +424,14 @@ function createMediumLevelKeyboard() {
         const activateButton = (index) => {
 
             if (index < resultRandomLetter.length) {
-                for (let a = 0; a < randomButtons.length; a++) {
-                    if (resultRandomLetter[index] == randomButtons[a].innerText) {
+                for (let i = 0; i < randomButtons.length; i++) {
+                    if (resultRandomLetter[index] == randomButtons[i].innerText) {
                         setTimeout(() => {
-                            randomButtons[a].classList.add('active');
+                            randomButtons[i].classList.add('active');
 
                             setTimeout(() => {
-                                randomButtons[a].classList.remove('active');
-
-                                activateButton(index + 1)
+                                randomButtons[i].classList.remove('active');
+                                activateButton(index + 1);
                             }, 300);
                         }, 300);
                         break;
@@ -452,77 +451,86 @@ function createMediumLevelKeyboard() {
         let counterTrue = 0;
 
         inputLine.addEventListener('input', () => {
-            let startIndex = inputLine.value.length -1;
-            if (startIndex >= 0 && startIndex < resultRandomLetter.length) {
-                if (inputLine.value[startIndex] == resultRandomLetter[startIndex]) {
-                    counterTrue++;
+            let indexForCheck = 0;
 
+            if (indexForCheck >= 0 && indexForCheck < resultRandomLetter.length) {
+
+                if (inputLine.value[indexForCheck] == resultRandomLetter[indexForCheck]) {
+                    counterTrue++;
                     keyboardLine.classList.add('true');
 
                     setTimeout(() => {
                         keyboardLine.classList.remove('true');
                     }, 300);
 
+                    if (round == 10 && counterTrue == 10) {
+                        inputLine.disabled = true;
+                        winOrLoss.innerText = 'Medium level passed';
+                        inputLine.value = '';
+
+                        setTimeout(() => {
+                            inputLine.value = '';
+                            inputLine.disabled = false;
+                            buttonsContainer.style.display = 'none';
+                            keyboardLine.style.display = 'none';
+                            keyboard.style.display = 'none';
+                            inputLine.style.display = 'none';
+                            startButton.style.visibility = 'visible';
+                            roundCounter.style.display = 'none';
+                            winOrLoss.innerText = '';
+                            winOrLoss.style.display = 'none';
+                            repeatSequence.disabled = true;
+                            repeatSequence.classList.remove('disabled');
+                            resultRandomLetter = '';          
+                            startButton.style.visibility = 'visible';
+                            turnOnLevelButton();
+                        }, 10000);
+
+                        return;
+                    }
+
                     if (counterTrue == round) {
                         resultRandomLetter = '';
                         inputLine.value = '';
-                        winOrLoss.innerText = 'You Win!';
                         inputLine.disabled = true;
+                        winOrLoss.innerText = 'You Win!';
                         round += 2;
-                        newRound();
-
+                        
                         setTimeout(() => {
                             winOrLoss.innerText = '';
                             inputLine.disabled = false;
-                            activateRandomLetterButton();
-                        }, 3000)
-
-                        if (round === 10) {
-                            inputLine.disabled = true;
-                            winOrLoss.innerText = "Medium level passed";
-                            
-                            setTimeout(() => {
-                                    buttonsContainer.style.display = 'none';
-                                    keyboardLine.style.display = 'none';
-                                    keyboard.style.display = 'none';
-                                    inputLine.style.display = 'none';
-                                    startButton.style.visibility = 'visible';
-                                    roundCounter.style.display = 'none';
-                                    winOrLoss.innerText = '';
-                                    turnOnLevelButton();
-                            }, 3000);
-                        }
+                            newRound();
+                            activeRandomButtons();
+                        }, 3000);
                     }
-                } else {
+                } else if (inputLine.value[indexForCheck] != resultRandomLetter[indexForCheck]) {
+                    inputLine.value = '';
+                    winOrLoss.innerText = 'You Lose!';
                     keyboardLine.classList.add('false');
                     inputLine.disabled = true;
-                    winOrLoss.innerText = 'You Loss(';
-                    repeatSequence.disabled = true;
-                    repeatSequence.classList.add('disabled');
                 }
-
             }
+        });
+
+        newGameButton.addEventListener('click', () => {
+            inputLine.value = '';
+            inputLine.disabled = false;
+            buttonsContainer.style.display = 'none';
+            keyboardLine.style.display = 'none';
+            keyboard.style.display = 'none';
+            inputLine.style.display = 'none';
+            startButton.style.visibility = 'visible';
+            roundCounter.style.display = 'none';
+            winOrLoss.innerText = '';
+            winOrLoss.style.display = 'none';
+            repeatSequence.disabled = true;
+            repeatSequence.classList.remove('disabled');
+            resultRandomLetter = '';
+            turnOnLevelButton();
         });
     }
 
-    activateRandomLetterButton();
-
-    newGameButton.addEventListener('click', () => {
-        inputLine.value = '';
-        inputLine.disabled = false;
-        buttonsContainer.style.display = 'none';
-        keyboardLine.style.display = 'none';
-        keyboard.style.display = 'none';
-        inputLine.style.display = 'none';
-        startButton.style.visibility = 'visible';
-        roundCounter.style.display = 'none';
-        winOrLoss.innerText = '';
-        winOrLoss.style.display = 'none';
-        repeatSequence.disabled = true;
-        repeatSequence.classList.remove('disabled');
-        resultRandomLetter = '';
-        turnOnLevelButton();
-    });
+    activeRandomButtons();
 
     function newRound() {
 
@@ -548,9 +556,10 @@ function createMediumLevelKeyboard() {
 
 function createHardLevelKeyboard() {
     inputLine.style.display = 'block';
+    startButton.style.visibility = 'hidden';
 
     let randomButtonsList = '';
-    
+
     turnOffLevelButton();
 
     const randomButtons = [];
@@ -564,8 +573,8 @@ function createHardLevelKeyboard() {
     keyboardAndInputLineContainer.appendChild(hardKeyboard);
 
     const numberKeyboard = document.createElement('div');
-        numberKeyboard.classList.add('number_keyboard');
-        hardKeyboard.appendChild(numberKeyboard);
+    numberKeyboard.classList.add('number_keyboard');
+    hardKeyboard.appendChild(numberKeyboard);
 
     for (let numberKey = 1; numberKey <= 10; numberKey++) {
         const numberButton = document.createElement('button');
@@ -586,7 +595,7 @@ function createHardLevelKeyboard() {
 
         numberButton.addEventListener('click', () => {
             inputLine.value += numberButton.innerText;
-        })
+        });
     }
 
     const letterKeyboard = document.createElement('div');
@@ -610,16 +619,6 @@ function createHardLevelKeyboard() {
 
     }
 
-    inputLine.addEventListener('input', () => {
-        inputLine.value = inputLine.value.replace(/[^a-z0-9]/g, '');
-    });
-
-    inputLine.addEventListener('keydown', (event ) => {
-        if (event.key === 'Backspace') {
-            event.preventDefault();
-        }
-    })
-
     inputLine.addEventListener('keydown', (event) => {
         const checkkeyDown = event.key;
         const checkNumberButton = numberKeyboard.querySelectorAll('button');
@@ -633,7 +632,7 @@ function createHardLevelKeyboard() {
                     buttonNumber.classList.remove('active');
                 }, 300)
             }
-        })
+        });
 
         checkLetterButton.forEach((buttonLetter) => {
             if (buttonLetter.innerText == checkkeyDown) {
@@ -644,7 +643,7 @@ function createHardLevelKeyboard() {
                 }, 300);
             }
         })
-    })
+    });
 
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('buttons_container');
@@ -680,7 +679,7 @@ function createHardLevelKeyboard() {
         let resultRandomButton = '';
         winOrLoss.style.display = 'block';
 
-        for(let i = 0; i < round; i++) {
+        for (let i = 0; i < round; i++) {
             function getRandomNumber(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
@@ -731,6 +730,32 @@ function createHardLevelKeyboard() {
                         keyboardLine.classList.remove('true');
                     }, 300);
 
+                    if (round == 10 && counterTrue == 10) {
+                        inputLine.disabled = true;
+                        winOrLoss.innerText = 'Medium level passed';
+                        inputLine.value = '';
+
+                        setTimeout(() => {
+                            inputLine.value = '';
+                            inputLine.disabled = false;
+                            buttonsContainer.style.display = 'none';
+                            keyboardLine.style.display = 'none';
+                            hardKeyboard.style.display = 'none';
+                            inputLine.style.display = 'none';
+                            startButton.style.visibility = 'visible';
+                            roundCounter.style.display = 'none';
+                            winOrLoss.innerText = '';
+                            winOrLoss.style.display = 'none';
+                            repeatSequence.disabled = true;
+                            repeatSequence.classList.remove('disabled');
+                            resultRandomLetter = '';          
+                            startButton.style.visibility = 'visible';
+                            turnOnLevelButton();
+                        }, 10000);
+
+                        return;
+                    }
+
                     if (counterTrue == round) {
                         resultRandomButton = '';
                         inputLine.value = '';
@@ -772,26 +797,27 @@ function createHardLevelKeyboard() {
 
             }
         });
+
+        newGameButton.addEventListener('click', () => {
+            inputLine.value = '';
+            inputLine.disabled = false;
+            buttonsContainer.style.display = 'none';
+            hardKeyboard.style.display = 'none';
+            hardKeyboard.style.display = 'none';
+            keyboardLine.style.display = 'none';
+            inputLine.style.display = 'none';
+            startButton.style.visibility = 'visible';
+            roundCounter.style.display = 'none';
+            winOrLoss.innerText = '';
+            winOrLoss.style.display = 'none';
+            repeatSequence.disabled = true;
+            repeatSequence.classList.remove('disabled');
+            resultRandomButton = '';
+            turnOnLevelButton();
+        });
     }
 
     activeRandomButton();
-
-    newGameButton.addEventListener('click', () => {
-        inputLine.value = '';
-        inputLine.disabled = false;
-        buttonsContainer.style.display = 'none';
-        keyboardLine.style.display = 'none';
-        keyboard.style.display = 'none';
-        inputLine.style.display = 'none';
-        startButton.style.visibility = 'visible';
-        roundCounter.style.display = 'none';
-        winOrLoss.innerText = '';
-        winOrLoss.style.display = 'none';
-        repeatSequence.disabled = true;
-        repeatSequence.classList.remove('disabled');
-        resultRandomButton = '';
-        turnOnLevelButton();
-    });
 
     function newRound() {
 
