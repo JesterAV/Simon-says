@@ -216,8 +216,6 @@ function createEasyLevelKeyboard() {
 
         let counterTrue = 0;
 
-        console.log(resultRandomNumber);
-
         inputLine.addEventListener('input', () => {
             let indexForCheck = 0;
 
